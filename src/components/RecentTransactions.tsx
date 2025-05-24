@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Mic, Camera, Edit, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { useTransactions } from '../context/TransactionContext';
+import { useTransactions, formatCurrency } from '../context/TransactionContext';
 
 const RecentTransactions = () => {
   const { state } = useTransactions();
@@ -64,7 +64,7 @@ const RecentTransactions = () => {
               <p className={`font-semibold ${
                 transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
               }`}>
-                {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toLocaleString()}
+                {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
               </p>
             </div>
           </div>
@@ -72,6 +72,22 @@ const RecentTransactions = () => {
       </div>
     </div>
   );
+};
+
+const getInputMethodIcon = (method: string) => {
+  switch (method) {
+    case 'voice': return <Mic className="h-4 w-4" />;
+    case 'photo': return <Camera className="h-4 w-4" />;
+    default: return <Edit className="h-4 w-4" />;
+  }
+};
+
+const getInputMethodColor = (method: string) => {
+  switch (method) {
+    case 'voice': return 'text-blue-600 bg-blue-50';
+    case 'photo': return 'text-green-600 bg-green-50';
+    default: return 'text-purple-600 bg-purple-50';
+  }
 };
 
 export default RecentTransactions;

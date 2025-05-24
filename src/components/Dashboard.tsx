@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Plus, Mic, Camera, Edit } from 'lucide-react';
-import { useTransactions } from '../context/TransactionContext';
+import { useTransactions, formatCurrency } from '../context/TransactionContext';
 import MetricCard from './MetricCard';
 import QuickActions from './QuickActions';
 import RecentTransactions from './RecentTransactions';
@@ -30,21 +30,21 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <MetricCard
           title="Total Income"
-          value={`$${state.totalIncome.toLocaleString()}`}
+          value={formatCurrency(state.totalIncome)}
           change="+12.5%"
           changeType="positive"
           icon="trending-up"
         />
         <MetricCard
           title="Total Expenses"
-          value={`$${state.totalExpenses.toLocaleString()}`}
+          value={formatCurrency(state.totalExpenses)}
           change="+5.2%"
           changeType="negative"
           icon="trending-down"
         />
         <MetricCard
           title="Net Profit"
-          value={`$${state.netProfit.toLocaleString()}`}
+          value={formatCurrency(state.netProfit)}
           change="+18.3%"
           changeType={state.netProfit >= 0 ? "positive" : "negative"}
           icon="dollar-sign"

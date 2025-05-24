@@ -25,12 +25,17 @@ type TransactionAction =
   | { type: 'DELETE_TRANSACTION'; payload: string }
   | { type: 'UPDATE_TRANSACTION'; payload: Transaction };
 
+// Format currency in KSH
+export const formatCurrency = (amount: number): string => {
+  return `KSh ${amount.toLocaleString('en-KE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+};
+
 const initialState: TransactionState = {
   transactions: [
     {
       id: '1',
       type: 'income',
-      amount: 2500,
+      amount: 250000,
       description: 'Client payment for web design',
       category: 'Services',
       date: '2024-01-20',
@@ -40,7 +45,7 @@ const initialState: TransactionState = {
     {
       id: '2',
       type: 'expense',
-      amount: 150,
+      amount: 15000,
       description: 'Office supplies from Staples',
       category: 'Supplies',
       date: '2024-01-19',
@@ -50,7 +55,7 @@ const initialState: TransactionState = {
     {
       id: '3',
       type: 'expense',
-      amount: 89,
+      amount: 8900,
       description: 'Business lunch with client',
       category: 'Marketing',
       date: '2024-01-18',
@@ -60,7 +65,7 @@ const initialState: TransactionState = {
     {
       id: '4',
       type: 'income',
-      amount: 1200,
+      amount: 120000,
       description: 'Logo design project',
       category: 'Services',
       date: '2024-01-17',

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Search, Filter, ArrowUpRight, ArrowDownRight, Trash2, Mic, Camera, Edit } from 'lucide-react';
-import { useTransactions } from '../context/TransactionContext';
+import { useTransactions, formatCurrency } from '../context/TransactionContext';
 
 const Transactions = () => {
   const { state, deleteTransaction } = useTransactions();
@@ -115,7 +115,7 @@ const Transactions = () => {
                     <p className={`text-lg font-semibold ${
                       transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
                     }`}>
-                      {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toLocaleString()}
+                      {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
                     </p>
                   </div>
                   

@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Mic, Camera, Edit, MicOff, Loader2 } from 'lucide-react';
-import { useTransactions } from '../context/TransactionContext';
+import { useSupabaseTransactions } from '../context/SupabaseTransactionContext';
+import { TransactionService } from '../services/transactionService';
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -14,9 +15,10 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   onClose, 
   inputMethod 
 }) => {
-  const { addTransaction } = useTransactions();
+  const { addTransaction } = useSupabaseTransactions();
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     type: 'expense' as 'income' | 'expense',
     amount: '',
@@ -25,28 +27,46 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     date: new Date().toISOString().split('T')[0]
   });
 
-  const incomeCategories = ['Sales', 'Services', 'Other Income'];
-  const expenseCategories = ['Supplies', 'Marketing', 'Transport', 'Utilities', 'Rent', 'Other'];
-  
-  const categories = formData.type === 'income' ? incomeCategories : expenseCategories;
+  // Load categories when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      loadCategories();
+    }
+  }, [isOpen, formData.type]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const loadCategories = async () => {
+    try {
+      const categoryList = await TransactionService.getCategories(formData.type);
+      setCategories(categoryList);
+      if (categoryList.length > 0 && !formData.category) {
+        setFormData(prev => ({ ...prev, category: categoryList[0].name }));
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.amount && formData.description) {
-      addTransaction({
-        ...formData,
-        amount: parseFloat(formData.amount),
-        category: formData.category || categories[0],
-        inputMethod
-      });
-      onClose();
-      setFormData({
-        type: 'expense',
-        amount: '',
-        description: '',
-        category: '',
-        date: new Date().toISOString().split('T')[0]
-      });
+      try {
+        await addTransaction({
+          ...formData,
+          amount: parseFloat(formData.amount),
+          category: formData.category || categories[0]?.name || 'Other',
+          input_method: inputMethod
+        });
+        onClose();
+        setFormData({
+          type: 'expense',
+          amount: '',
+          description: '',
+          category: '',
+          date: new Date().toISOString().split('T')[0]
+        });
+      } catch (error) {
+        console.error('Error adding transaction:', error);
+      }
     }
   };
 
@@ -195,20 +215,17 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Amount
+                Amount (KSh)
               </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={formData.amount}
-                  onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="0.00"
-                  required
-                />
-              </div>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.amount}
+                onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="0.00"
+                required
+              />
             </div>
 
             <div>
@@ -236,7 +253,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               >
                 <option value="">Select a category</option>
                 {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category.id} value={category.name}>{category.name}</option>
                 ))}
               </select>
             </div>

@@ -5,11 +5,11 @@ import Dashboard from '../components/Dashboard';
 import Transactions from '../components/Transactions';
 import Analytics from '../components/Analytics';
 import Sidebar from '../components/Sidebar';
-import { TransactionProvider } from '../context/TransactionContext';
+import { SupabaseTransactionProvider } from '../context/SupabaseTransactionContext';
 
 const Index = () => {
   return (
-    <TransactionProvider>
+    <SupabaseTransactionProvider>
       <div className="flex h-screen bg-gray-50">
         <Sidebar />
         <main className="flex-1 overflow-auto">
@@ -20,7 +20,7 @@ const Index = () => {
           </Routes>
         </main>
       </div>
-    </TransactionProvider>
+    </SupabaseTransactionProvider>
   );
 };
 

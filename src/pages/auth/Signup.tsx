@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserPlus, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useToast } from '../../components/ui/use-toast';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -17,12 +18,14 @@ const Signup = () => {
   
   const { signUp } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
+    // Validation
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -35,14 +38,37 @@ const Signup = () => {
       return;
     }
 
-    const { error } = await signUp(email, password, businessName || 'My Business');
-    
-    if (error) {
-      setError(error.message);
-    } else {
-      setSuccess(true);
-      setTimeout(() => navigate('/auth/login'), 2000);
+    try {
+      const { data, error } = await signUp(email, password, businessName || 'My Business');
+      
+      if (error) {
+        // Handle specific error cases
+        if (error.message.includes('User already registered')) {
+          setError('An account with this email already exists. Please try logging in instead.');
+        } else if (error.message.includes('Invalid email')) {
+          setError('Please enter a valid email address.');
+        } else if (error.message.includes('Password')) {
+          setError('Password does not meet requirements. Please ensure it\'s at least 6 characters.');
+        } else {
+          setError(error.message || 'An error occurred during signup. Please try again.');
+        }
+      } else if (data.user) {
+        setSuccess(true);
+        toast({
+          title: "Account Created!",
+          description: "Please check your email to verify your account.",
+        });
+        
+        // Redirect after showing success message
+        setTimeout(() => {
+          navigate('/auth/login');
+        }, 3000);
+      }
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      setError('An unexpected error occurred. Please try again.');
     }
+    
     setLoading(false);
   };
 
@@ -51,9 +77,9 @@ const Signup = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8 text-center">
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-6 rounded-lg">
-            <h3 className="text-lg font-medium">Account Created!</h3>
+            <h3 className="text-lg font-medium">Account Created Successfully!</h3>
             <p className="mt-2">Please check your email to verify your account.</p>
-            <p className="mt-2 text-sm">Redirecting to login page...</p>
+            <p className="mt-2 text-sm">You'll be redirected to the login page shortly...</p>
           </div>
         </div>
       </div>
@@ -68,7 +94,7 @@ const Signup = () => {
             <UserPlus className="h-6 w-6 text-blue-600" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
+            Create your QuickTrack account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Start tracking your business finances today
@@ -77,7 +103,7 @@ const Signup = () => {
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}

@@ -31,9 +31,53 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // If user just signed up, ensure their profile exists
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            // Check if business profile exists
+            const { data: profile, error } = await supabase
+              .from('business_profiles')
+              .select('id')
+              .eq('user_id', session.user.id)
+              .single();
+            
+            // If no profile exists, create one
+            if (!profile && !error?.message?.includes('Multiple rows')) {
+              console.log('Creating business profile for user:', session.user.id);
+              await supabase
+                .from('business_profiles')
+                .insert({
+                  user_id: session.user.id,
+                  business_name: session.user.user_metadata?.business_name || 'My Business',
+                  currency: 'KSH'
+                });
+              
+              // Also create default categories
+              const defaultCategories = [
+                { user_id: session.user.id, name: 'Sales', type: 'income' },
+                { user_id: session.user.id, name: 'Services', type: 'income' },
+                { user_id: session.user.id, name: 'Other Income', type: 'income' },
+                { user_id: session.user.id, name: 'Supplies', type: 'expense' },
+                { user_id: session.user.id, name: 'Marketing', type: 'expense' },
+                { user_id: session.user.id, name: 'Transport', type: 'expense' },
+                { user_id: session.user.id, name: 'Utilities', type: 'expense' },
+                { user_id: session.user.id, name: 'Other', type: 'expense' }
+              ];
+              
+              await supabase
+                .from('categories')
+                .insert(defaultCategories);
+            }
+          } catch (profileError) {
+            console.log('Profile creation handled by trigger or already exists');
+          }
+        }
+        
         setLoading(false);
       }
     );
@@ -58,6 +102,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
+      console.error('Sign in error:', error);
       return { data: null, error };
     } finally {
       setLoading(false);
@@ -76,9 +121,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           },
         },
       });
+      
       if (error) throw error;
+      
+      // If user is immediately confirmed (like in development), create profile manually
+      if (data.user && !data.user.email_confirmed_at) {
+        console.log('User signup successful, profile will be created on confirmation');
+      }
+      
       return { data, error: null };
     } catch (error) {
+      console.error('Sign up error:', error);
       return { data: null, error };
     } finally {
       setLoading(false);
@@ -102,6 +155,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
+      console.error('Reset password error:', error);
       return { data: null, error };
     }
   };

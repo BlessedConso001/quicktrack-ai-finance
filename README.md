@@ -1,73 +1,104 @@
-# Welcome to your Lovable project
+```markdown
+# QuickBiz Track
 
-## Project info
+A lightweight, AI-powered financial tracking tool designed for informal traders and micro-businesses. QuickBiz Track allows users to track income and expenses via voice and photo input, providing real-time insights into their profitability—no accounting knowledge needed.
 
-**URL**: https://lovable.dev/projects/b3ec9ef1-4657-42c1-b3d3-5ffe73e9f06b
+---
 
-## How can I edit this code?
+## 🌐 Project URL
+[Lovable Project](https://lovable.dev/projects/b3ec9ef1-4657-42c1-b3d3-5ffe73e9f06b)
 
-There are several ways of editing your application.
+## 📱 Live App
+[QuickBiz Track App](https://quicktrack-ai-finance.lovable.app/auth/login)
 
-**Use Lovable**
+## 🖥️ Pitch Deck
+[Pitch Deck on Gamma](https://gamma.app/docs/Pitch-Deck-QuickBiz-Track-Know-Your-Numbers-Grow-Your-Business-p91h58wc95y1nrf)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b3ec9ef1-4657-42c1-b3d3-5ffe73e9f06b) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Features
+- 📸 **Photo-based Income & Expense Logging**
+- 🎤 **Voice-to-Transaction Input**
+- 📊 **Live Dashboard for Profit/Loss Summary**
+- 🔔 **Reminders for Daily Entries**
+- 🌍 **Multilingual Voice Support (including Swahili)**
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🧱 Tech Stack
+- **Vite**
+- **TypeScript**
+- **React**
+- **Tailwind CSS**
+- **shadcn-ui**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 📂 Project Structure
+```bash
+.
+├── src/
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Route-based pages
+│   ├── hooks/            # Custom React hooks
+│   ├── lib/              # Utility functions
+│   ├── App.tsx           # Root component
+│   └── main.tsx          # App entry point
+├── public/               # Static files
+├── tailwind.config.js    # Tailwind CSS configuration
+├── vite.config.ts        # Vite config file
+└── package.json          # Project dependencies
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+---
+
+## 🛠️ How to Clone & Run Locally
+
+### Requirements
+- Node.js & npm (Install via [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+
+### Setup Steps
+```bash
+# 1. Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# 2. Navigate into the project folder
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 3. Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 4. Run the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Visit `http://localhost:5173` to view the app locally.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 🤝 Contributing
+We welcome contributions! Follow these steps:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Fork the repo
+2. Create your feature branch: `git checkout -b feature/YourFeature`
+3. Commit your changes: `git commit -m 'Add YourFeature'`
+4. Push to the branch: `git push origin feature/YourFeature`
+5. Open a Pull Request
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 🌍 Deployment
+To publish your project, go to:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- [Lovable Project Dashboard](https://lovable.dev/projects/b3ec9ef1-4657-42c1-b3d3-5ffe73e9f06b)
+- Click on **Share → Publish** to make it live.
 
-## How can I deploy this project?
+You can also connect a custom domain in **Project > Settings > Domains**.
 
-Simply open [Lovable](https://lovable.dev/projects/b3ec9ef1-4657-42c1-b3d3-5ffe73e9f06b) and click on Share -> Publish.
+📖 [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 📬 Contact
+Have suggestions or want to partner with us? Email us at **[mugoconsolata70@gmail.com](mailto:mugoconsolata70@gmail.com)** or reach out through the Lovable project dashboard or GitHub Discussions.
+```

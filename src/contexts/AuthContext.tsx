@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setSession(session);
         setUser(session?.user ?? null);
         
-        // If user just signed up, ensure their profile exists
+        // If user just signed up or signed in, ensure their profile exists
         if (event === 'SIGNED_IN' && session?.user) {
           try {
             // Check if business profile exists
@@ -44,18 +44,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               .from('business_profiles')
               .select('id')
               .eq('user_id', session.user.id)
-              .single();
+              .maybeSingle();
+            
+            if (error) {
+              console.error('Error checking profile:', error);
+            }
             
             // If no profile exists, create one
-            if (!profile && !error?.message?.includes('Multiple rows')) {
+            if (!profile) {
               console.log('Creating business profile for user:', session.user.id);
-              await supabase
+              const { error: insertError } = await supabase
                 .from('business_profiles')
                 .insert({
                   user_id: session.user.id,
                   business_name: session.user.user_metadata?.business_name || 'My Business',
                   currency: 'KSH'
                 });
+              
+              if (insertError) {
+                console.error('Error creating business profile:', insertError);
+              } else {
+                console.log('Business profile created successfully');
+              }
               
               // Also create default categories
               const defaultCategories = [
@@ -69,12 +79,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 { user_id: session.user.id, name: 'Other', type: 'expense' }
               ];
               
-              await supabase
+              const { error: categoriesError } = await supabase
                 .from('categories')
                 .insert(defaultCategories);
+              
+              if (categoriesError) {
+                console.error('Error creating default categories:', categoriesError);
+              } else {
+                console.log('Default categories created successfully');
+              }
             }
           } catch (profileError) {
-            console.log('Profile creation handled by trigger or already exists');
+            console.error('Error in profile creation process:', profileError);
           }
         }
         
@@ -124,11 +140,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       if (error) throw error;
       
-      // If user is immediately confirmed (like in development), create profile manually
-      if (data.user && !data.user.email_confirmed_at) {
-        console.log('User signup successful, profile will be created on confirmation');
-      }
-      
+      console.log('User signup successful:', data.user?.id);
       return { data, error: null };
     } catch (error) {
       console.error('Sign up error:', error);

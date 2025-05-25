@@ -1,4 +1,4 @@
-```markdown
+
 # QuickBiz Track
 
 A lightweight, AI-powered financial tracking tool designed for informal traders and micro-businesses. QuickBiz Track allows users to track income and expenses via voice and photo input, providing real-time insights into their profitability—no accounting knowledge needed.
